@@ -1,1 +1,12 @@
 @import '~node_modules/modern-normalize/modern-normalize.css';
+
+
+:root {
+  --primary-color: #368ac2;
+  --text-color:#a1c3e2;
+  --button-color: #0f3c77;
+  --shadow-color: #0f3c77d3;
+
+  --transision: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transision-scale: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
