@@ -2,6 +2,8 @@ import refs from './js/common/refs';
 import ImagesApiService from './js/apiService/api-service';
 import createGalleryMarkup from './js/markupService/createGallery';
 import { Notify } from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
 refs.loadMoreBtn.style.display = 'none';
 
@@ -9,6 +11,12 @@ refs.searchForm.addEventListener('submit', onSearchFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 const imagesApiService = new ImagesApiService();
+const lightbox = new SimpleLightbox('.photo-card-link', {
+  /* options */
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 async function onSearchFormSubmit(e) {
   e.preventDefault();
@@ -42,4 +50,5 @@ async function onLoadMore() {
 
 function renderGallery(data) {
   refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
+  lightbox.refresh();
 }
