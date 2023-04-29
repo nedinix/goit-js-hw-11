@@ -47,16 +47,22 @@ export default class ImagesApiService {
 
       if (this.searchQuery) {
         const response = await instance.get('', options);
-        this.page += 1;
+        this.incrementPage();
         return response.data.hits;
-      } else {
-        // this.page = 1;
       }
 
       console.log('after ', this.page); //console
     } catch (error) {
       console.error(error.status);
     }
+  }
+
+  incrementPage() {
+    this.page += 1;
+  }
+
+  resetPage() {
+    this.page = 1;
   }
 
   get query() {

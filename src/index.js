@@ -18,6 +18,8 @@ async function onSearchFormSubmit(e) {
   // );
 
   imagesApiService.searchQuery = e.target.searchQuery.value.trim();
+  imagesApiService.resetPage();
+  refs.container.innerHTML = '';
   refs.container.insertAdjacentHTML(
     'beforeend',
     createGalleryMarkup(await imagesApiService.getImages())
