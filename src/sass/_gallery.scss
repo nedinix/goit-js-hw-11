@@ -11,9 +11,10 @@
   align-items: flex-start;
 }
 
+
+
 .load-more {
-  // visibility: hidden;
-  display: none;
+  display: block;
 
   margin-right: auto;
   margin-left: auto;
@@ -43,4 +44,8 @@
 .load-more:active {
   color: #0f3c77d3;
   background-color: #dee9f3;
+}
+
+.hidden {
+  display: none;
 }

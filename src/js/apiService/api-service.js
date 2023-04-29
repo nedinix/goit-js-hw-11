@@ -1,4 +1,7 @@
 import instance from './instance';
+import { Notify } from 'notiflix';
+
+const API_KEY = '35839995-5c49d25fb3199a064f9ba676b';
 
 export default class ImagesApiService {
   constructor() {
@@ -6,11 +9,11 @@ export default class ImagesApiService {
     this.page = 1;
   }
 
-  async getImages() {
+  async fetchImages() {
     try {
       const options = {
         params: {
-          key: '35839995-5c49d25fb3199a064f9ba676b',
+          key: API_KEY,
           image_type: 'photo',
           orientation: 'horizontal',
           safesearch: true,
@@ -23,12 +26,21 @@ export default class ImagesApiService {
       if (this.searchQuery) {
         const response = await instance.get('', options);
         this.incrementPage();
-        return response.data.hits;
+        console.log(response.data.totalHits);
+        if (!response.data.hits.length) {
+          Notify.failure(
+            'Sorry, there are no images matching your search query. Please try again.'
+          );
+        } else {
+          Notify.info(`"Hooray! We found ${response.data.totalHits} images."`);
+          return response.data.hits;
+        }
       }
 
       console.log('after ', this.page);
     } catch (error) {
-      console.error(error.status);
+      if (error.status === '404') {
+      }
     }
   }
 

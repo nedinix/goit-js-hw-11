@@ -2,6 +2,8 @@ import refs from './js/common/refs';
 import ImagesApiService from './js/apiService/api-service';
 import { createGalleryMarkup } from './js/markupService/createGallery';
 
+refs.loadMoreBtn.style.display = 'none';
+
 refs.searchForm.addEventListener('submit', onSearchFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
@@ -14,12 +16,16 @@ async function onSearchFormSubmit(e) {
   imagesApiService.searchQuery = e.target.searchQuery.value.trim();
   imagesApiService.resetPage();
   refs.container.innerHTML = '';
-  renderGallery(await imagesApiService.getImages());
-  refs.loadMoreBtn.style.display = 'block';
+  const response = await imagesApiService.fetchImages();
+  renderGallery(response);
+  if (response.length) {
+    refs.loadMoreBtn.style.display = 'block';
+  }
+  // refs.loadMoreBtn.classList.remove('hidden');
 }
 
 async function onLoadMore() {
-  renderGallery(await imagesApiService.getImages());
+  renderGallery(await imagesApiService.fetchImages());
 }
 
 function renderGallery(data) {
