@@ -31,9 +31,6 @@ export default class ImagesApiService {
       }
     } catch (error) {
       console.log(error.message);
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
     }
   }
 
