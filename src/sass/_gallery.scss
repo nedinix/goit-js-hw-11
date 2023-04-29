@@ -11,13 +11,15 @@
   align-items: flex-start;
 }
 
+
+
 .load-more {
+  display: block;
+
   margin-right: auto;
   margin-left: auto;
   padding: 8px;
   
-  display: block;
-
   color: #fff;
   
   background-color: var(--button-color);
@@ -42,4 +44,8 @@
 .load-more:active {
   color: #0f3c77d3;
   background-color: #dee9f3;
+}
+
+.hidden {
+  display: none;
 }
