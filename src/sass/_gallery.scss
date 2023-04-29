@@ -1,9 +1,45 @@
 .gallery {
-  padding: 20px;
+  padding-top: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
+  padding-bottom: 40px;
 
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
+  justify-content: space-between;
   gap: 10px;
-  align-items: center;
+  align-items: flex-start;
+}
+
+.load-more {
+  margin-right: auto;
+  margin-left: auto;
+  padding: 8px;
+  
+  display: block;
+
+  color: #fff;
+  
+  background-color: var(--button-color);
+  border: transparent;
+  border-radius: 4px;
+  box-shadow: 0 0 5px -2px #313131d3;
+
+  transform: scale(0.98);
+  transition: box-shadow var(--transision),
+    color var(--transision),
+    background-color var(--transision),
+    transform var(--transision-scale);
+}
+
+.load-more:hover,
+.load-more:focus,
+.load-more:active {
+  box-shadow: 0 0 10px -2px var(--shadow-color);
+  transform: scale(1);
+}
+
+.load-more:active {
+  color: #0f3c77d3;
+  background-color: #dee9f3;
 }
