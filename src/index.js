@@ -1,5 +1,4 @@
 import refs from './js/common/refs';
-// import { ImagesApiService, getImages } from './js/apiService/imagesRequest';
 import ImagesApiService from './js/apiService/api-service';
 import { createGalleryMarkup } from './js/markupService/createGallery';
 
@@ -11,24 +10,18 @@ console.log(imagesApiService);
 
 async function onSearchFormSubmit(e) {
   e.preventDefault();
-  // searchKey = e.target.searchQuery.value.trim();
-  // refs.container.insertAdjacentHTML(
-  //   'beforeend',
-  //   createGalleryMarkup(await getImages(searchKey))
-  // );
 
   imagesApiService.searchQuery = e.target.searchQuery.value.trim();
   imagesApiService.resetPage();
   refs.container.innerHTML = '';
-  refs.container.insertAdjacentHTML(
-    'beforeend',
-    createGalleryMarkup(await imagesApiService.getImages())
-  );
+  renderGallery(await imagesApiService.getImages());
+  refs.loadMoreBtn.style.display = 'block';
 }
 
 async function onLoadMore() {
-  refs.container.insertAdjacentHTML(
-    'beforeend',
-    createGalleryMarkup(await imagesApiService.getImages())
-  );
+  renderGallery(await imagesApiService.getImages());
+}
+
+function renderGallery(data) {
+  refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
 }

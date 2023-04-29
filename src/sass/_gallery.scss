@@ -12,12 +12,13 @@
 }
 
 .load-more {
+  // visibility: hidden;
+  display: none;
+
   margin-right: auto;
   margin-left: auto;
   padding: 8px;
   
-  display: block;
-
   color: #fff;
   
   background-color: var(--button-color);
