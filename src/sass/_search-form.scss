@@ -22,7 +22,7 @@
   border-radius: 4px;
   box-shadow: 0 0 5px -2px #313131d3;
   
-  transform: scale(0.95);
+  transform: scale(0.98);
 
   transition: box-shadow var(--transision),
         outline var(--transision),
@@ -48,8 +48,9 @@
   background-color: var(--button-color);
   border: transparent;
   border-radius: 4px;
+  box-shadow: 0 0 5px -2px #313131d3;
 
-  transform: scale(0.95);
+  transform: scale(0.98);
   transition: box-shadow var(--transision),
     color var(--transision),
     background-color var(--transision),
