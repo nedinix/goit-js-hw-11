@@ -1,6 +1,5 @@
 @import '~node_modules/modern-normalize/modern-normalize.css';
 
-
 :root {
   --primary-color: #fff;
   --text-color:#a1c3e2;
@@ -9,4 +8,10 @@
 
   --transision: 250ms cubic-bezier(0.4, 0, 0.2, 1);
   --transision-scale: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
