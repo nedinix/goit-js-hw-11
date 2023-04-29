@@ -10,37 +10,30 @@ export default class ImagesApiService {
   }
 
   async fetchImages() {
-    try {
-      const options = {
-        params: {
-          key: API_KEY,
-          image_type: 'photo',
-          orientation: 'horizontal',
-          safesearch: true,
-          q: this.searchQuery,
-          per_page: 40,
-          page: this.page,
-        },
-      };
+    const options = {
+      params: {
+        key: API_KEY,
+        image_type: 'photo',
+        orientation: 'horizontal',
+        safesearch: true,
+        q: this.searchQuery,
+        per_page: 40,
+        page: this.page,
+      },
+    };
 
+    try {
       if (this.searchQuery) {
         const response = await instance.get('', options);
         this.incrementPage();
-        console.log(response.data.totalHits);
-        if (!response.data.hits.length) {
-          Notify.failure(
-            'Sorry, there are no images matching your search query. Please try again.'
-          );
-        } else {
-          Notify.info(`"Hooray! We found ${response.data.totalHits} images."`);
-          return response.data.hits;
-        }
-      }
 
-      console.log('after ', this.page);
-    } catch (error) {
-      if (error.status === '404') {
+        return response.data;
       }
+    } catch (error) {
+      console.log(error.message);
+      Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
     }
   }
 
