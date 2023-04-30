@@ -25,31 +25,38 @@ async function onSearchFormSubmit(e) {
   refs.loadMoreBtn.classList.add('is-hidden');
   refs.container.innerHTML = '';
 
-  if (imagesApiService.searchQuery) {
-    const { hits, totalHits } = await imagesApiService.fetchImages();
-    if (hits.length) {
-      Notify.success(`Hooray! We found ${totalHits} images.`);
-      renderGallery(hits);
-
-      refs.loadMoreBtn.classList.remove('is-hidden');
-      smoothScroll();
-    } else {
-      Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
-  } else {
-    Notify.failure(
+  if (!imagesApiService.searchQuery) {
+    return Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
+
+  return await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
+    if (!hits.length) {
+      return Notify.failure(
+        'Sorry, there are no images matching your search query. Please try again.'
+      );
+    }
+    Notify.success(`Hooray! We found ${totalHits} images.`);
+    renderGallery(hits);
+    if (totalHits < hits.length) {
+      refs.loadMoreBtn.classList.remove('is-hidden');
+    }
+  });
 }
 
 async function onLoadMore() {
-  const { hits } = await imagesApiService.fetchImages();
-  renderGallery(hits);
-  smoothScroll();
-}
+  return await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
+    if (hits.length < totalHits) {
+      renderGallery(hits);
+      smoothScroll();
+    } else {
+      refs.loadMoreBtn.classList.add('is-hidden');
+      Notify.failure(
+        "We're sorry, but you've reached the end of search results."
+      );
+    }
+});
 
 function renderGallery(data) {
   refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
