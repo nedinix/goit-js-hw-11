@@ -2,20 +2,27 @@ import refs from './js/common/refs';
 import ImagesApiService from './js/apiService/api-service';
 import createGalleryMarkup from './js/markupService/createGallery';
 import { Notify } from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 
-refs.loadMoreBtn.style.display = 'none';
+refs.loadMoreBtn.classList.add('is-hidden');
 
 refs.searchForm.addEventListener('submit', onSearchFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 const imagesApiService = new ImagesApiService();
+const lightbox = new SimpleLightbox('.photo-card-link', {
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
+});
 
 async function onSearchFormSubmit(e) {
   e.preventDefault();
 
   imagesApiService.searchQuery = e.target.searchQuery.value.trim();
   imagesApiService.resetPage();
-  refs.loadMoreBtn.style.display = 'none';
+  refs.loadMoreBtn.classList.add('is-hidden');
   refs.container.innerHTML = '';
 
   if (!imagesApiService.searchQuery) {
@@ -49,9 +56,17 @@ async function onLoadMore() {
         "We're sorry, but you've reached the end of search results."
       );
     }
-  });
-}
+});
 
 function renderGallery(data) {
   refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
+  lightbox.refresh();
+}
+
+function smoothScroll() {
+  setTimeout(() => {
+    const { height: cardHeight } =
+      refs.container.firstElementChild.getBoundingClientRect();
+    window.scrollBy({ top: cardHeight * 2, behavior: 'smooth' });
+  }, 500);
 }

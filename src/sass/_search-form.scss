@@ -1,12 +1,12 @@
 .search-wrapper {
   padding-top: 20px;
   padding-bottom: 20px;
-  
+
   display: flex;
   justify-content: center;
 
   background-color: var(--primary-color);
-  box-shadow:  0 0 4px 2px #31313136;
+  box-shadow: 0 0 4px 2px #31313136;
 }
 
 .search-input {
@@ -15,23 +15,21 @@
   padding-left: 10px;
   padding-right: 10px;
 
-  // width: 100%;
   max-width: 300px;
 
   border: transparent;
   border-radius: 4px;
   box-shadow: 0 0 5px -2px #313131d3;
-  
+
   transform: scale(0.98);
 
-  transition: box-shadow var(--transision),
-        outline var(--transision),
-        transform var(--transision-scale);
+  transition: box-shadow var(--transision), outline var(--transision),
+    transform var(--transision-scale);
 }
 
 .search-input:hover,
 .search-input:focus {
-  transform: scale(1);  
+  transform: scale(1);
   box-shadow: 0 0 10px -2px var(--shadow-color);
 }
 
@@ -42,7 +40,7 @@
 
 .search-button {
   padding: 8px;
-  
+
   color: #fff;
 
   background-color: var(--button-color);
@@ -51,10 +49,8 @@
   box-shadow: 0 0 5px -2px #313131d3;
 
   transform: scale(0.98);
-  transition: box-shadow var(--transision),
-    color var(--transision),
-    background-color var(--transision),
-    transform var(--transision-scale);
+  transition: box-shadow var(--transision), color var(--transision),
+    background-color var(--transision), transform var(--transision-scale);
 }
 
 .search-button:hover,
@@ -62,9 +58,9 @@
 .search-button:active {
   box-shadow: 0 0 10px -2px var(--shadow-color);
   transform: scale(1);
-} 
+}
 
 .search-button:active {
   color: #0f3c77d3;
- background-color: #dee9f3;
+  background-color: #dee9f3;
 }
