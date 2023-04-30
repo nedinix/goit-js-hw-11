@@ -6,7 +6,6 @@ import {
   addLoadMoreBtn,
   hideLoadMoreBtn,
 } from './js/helpers/toggleloadMoreBtn';
-import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -21,16 +20,13 @@ const lightbox = new SimpleLightbox('.photo-card-link', {
   captionsData: 'alt',
   captionDelay: 250,
 });
-
-let options = {
+let observer = new IntersectionObserver(onScrollLoad, {
   root: null,
-  rootMargin: '900px',
+  rootMargin: '1000px',
   threshold: 1.0,
-};
+});
 
-let observer = new IntersectionObserver(onScrollLoad, options);
-
-async function onScrollLoad(entries, observer) {
+async function onScrollLoad(entries, _) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       return loadNextPage();
@@ -38,10 +34,18 @@ async function onScrollLoad(entries, observer) {
   });
 }
 
+async function onLoadMore() {
+  return loadNextPage();
+}
+
+function renderGallery(data) {
+  refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
+  lightbox.refresh();
+}
+
 async function onSearchFormSubmit(e) {
   e.preventDefault();
   imagesApiService.searchQuery = e.target.searchQuery.value.trim();
-
   imagesApiService.resetPage();
   hideLoadMoreBtn();
   refs.container.innerHTML = '';
@@ -49,7 +53,9 @@ async function onSearchFormSubmit(e) {
   try {
     await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
       if (!hits.length) {
-        return;
+        return Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
       }
       Notify.success(`Hooray! We found ${totalHits} images.`);
       renderGallery(hits);
@@ -65,36 +71,26 @@ async function onSearchFormSubmit(e) {
   }
 }
 
-async function onLoadMore() {
-  return await loadNextPage();
-}
-
-function loadNextPage() {
-  imagesApiService
-    .fetchImages()
-    .then(({ hits, totalHits }) => {
+async function loadNextPage() {
+  try {
+    await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
       if (hits.length < totalHits) {
         renderGallery(hits);
       }
-
       if (hits.length < 40) {
         hideLoadMoreBtn();
         Notify.info(
           "We're sorry, but you've reached the end of search results.",
           {
             timeout: 2000,
-            position: 'center-top',
+            position: 'center-bottom',
           }
         );
+        observer.unobserve(refs.loadMoreBtn);
       }
       loadScroll();
-    })
-    .catch(e => {
-      console.log(e.message);
     });
-}
-
-function renderGallery(data) {
-  refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
-  lightbox.refresh();
+  } catch (error) {
+    Notify.failure(`${error.message}`);
+  }
 }
