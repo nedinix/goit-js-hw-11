@@ -1,5 +1,4 @@
 import instance from './instance';
-import { Notify } from 'notiflix';
 
 const API_KEY = '35839995-5c49d25fb3199a064f9ba676b';
 
@@ -22,16 +21,13 @@ export default class ImagesApiService {
       },
     };
 
-    try {
-      if (this.searchQuery) {
-        const response = await instance.get('', options);
-        this.incrementPage();
-
-        return response.data;
-      }
-    } catch (error) {
-      console.log(error.message);
+    if (!this.searchQuery) {
+      return;
     }
+
+    const response = await instance.get('', options);
+    this.incrementPage();
+    return response.data;
   }
 
   incrementPage() {
