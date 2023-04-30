@@ -2,12 +2,16 @@ import refs from './js/common/refs';
 import ImagesApiService from './js/apiService/api-service';
 import createGalleryMarkup from './js/markupService/createGallery';
 import loadScroll from './js/helpers/loadScroll';
+import {
+  addLoadMoreBtn,
+  hideLoadMoreBtn,
+} from './js/helpers/toggleloadMoreBtn';
+import debounce from 'lodash.debounce';
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-refs.loadMoreBtn.classList.add('is-hidden');
-
+hideLoadMoreBtn();
 refs.searchForm.addEventListener('submit', onSearchFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
@@ -18,20 +22,40 @@ const lightbox = new SimpleLightbox('.photo-card-link', {
   captionDelay: 250,
 });
 
+let options = {
+  root: null,
+  rootMargin: '900px',
+  threshold: 1.0,
+};
+
+let observer = new IntersectionObserver(onScrollLoad, options);
+
+async function onScrollLoad(entries, observer) {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      return loadNextPage();
+    }
+  });
+}
+
 async function onSearchFormSubmit(e) {
   e.preventDefault();
-
   imagesApiService.searchQuery = e.target.searchQuery.value.trim();
+
   imagesApiService.resetPage();
-  refs.loadMoreBtn.classList.add('is-hidden');
+  hideLoadMoreBtn();
   refs.container.innerHTML = '';
 
   try {
     await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
+      if (!hits.length) {
+        return;
+      }
       Notify.success(`Hooray! We found ${totalHits} images.`);
       renderGallery(hits);
+      observer.observe(refs.loadMoreBtn);
       if (totalHits > 40) {
-        refs.loadMoreBtn.classList.remove('is-hidden');
+        addLoadMoreBtn();
       }
     });
   } catch (error) {
@@ -42,23 +66,32 @@ async function onSearchFormSubmit(e) {
 }
 
 async function onLoadMore() {
-  await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
-    if (hits.length < totalHits) {
-      renderGallery(hits);
-    }
+  return await loadNextPage();
+}
 
-    if (hits.length < 40) {
-      refs.loadMoreBtn.classList.add('is-hidden');
+function loadNextPage() {
+  imagesApiService
+    .fetchImages()
+    .then(({ hits, totalHits }) => {
+      if (hits.length < totalHits) {
+        renderGallery(hits);
+      }
 
-      Notify.failure(
-        "We're sorry, but you've reached the end of search results.",
-        {
-          timeout: 2000,
-        }
-      );
-    }
-    loadScroll();
-  });
+      if (hits.length < 40) {
+        hideLoadMoreBtn();
+        Notify.info(
+          "We're sorry, but you've reached the end of search results.",
+          {
+            timeout: 2000,
+            position: 'center-top',
+          }
+        );
+      }
+      loadScroll();
+    })
+    .catch(e => {
+      console.log(e.message);
+    });
 }
 
 function renderGallery(data) {

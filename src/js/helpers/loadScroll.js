@@ -5,5 +5,5 @@ export default function loadScroll() {
     const { height: cardHeight } =
       refs.container.firstElementChild.getBoundingClientRect();
     window.scrollBy({ top: cardHeight * 2, behavior: 'smooth' });
-  }, 500);
+  }, 400);
 }
