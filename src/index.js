@@ -11,6 +11,8 @@ import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
+import { onSearchFormSubmit } from './js/events';
+
 hideLoadMoreBtn();
 refs.searchForm.addEventListener('submit', onSearchFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
@@ -22,9 +24,11 @@ const lightbox = new SimpleLightbox('.photo-card-link', {
   captionDelay: 250,
 });
 
+console.log(imagesApiService);
+
 let options = {
   root: null,
-  rootMargin: '900px',
+  rootMargin: '1000px',
   threshold: 1.0,
 };
 
@@ -33,6 +37,7 @@ let observer = new IntersectionObserver(onScrollLoad, options);
 async function onScrollLoad(entries, observer) {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
+      console.log(entries);
       return loadNextPage();
     }
   });
@@ -49,8 +54,11 @@ async function onSearchFormSubmit(e) {
   try {
     await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
       if (!hits.length) {
-        return;
+        return Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
       }
+
       Notify.success(`Hooray! We found ${totalHits} images.`);
       renderGallery(hits);
       observer.observe(refs.loadMoreBtn);
@@ -66,13 +74,12 @@ async function onSearchFormSubmit(e) {
 }
 
 async function onLoadMore() {
-  return await loadNextPage();
+  return loadNextPage();
 }
 
-function loadNextPage() {
-  imagesApiService
-    .fetchImages()
-    .then(({ hits, totalHits }) => {
+async function loadNextPage() {
+  try {
+    await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
       if (hits.length < totalHits) {
         renderGallery(hits);
       }
@@ -86,12 +93,13 @@ function loadNextPage() {
             position: 'center-top',
           }
         );
+        observer.unobserve(refs.loadMoreBtn);
       }
       loadScroll();
-    })
-    .catch(e => {
-      console.log(e.message);
     });
+  } catch (error) {
+    Notify.failure(`${error.message}`);
+  }
 }
 
 function renderGallery(data) {
