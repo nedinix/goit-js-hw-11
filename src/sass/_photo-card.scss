@@ -6,13 +6,11 @@
   border-radius: 4px;
   box-shadow: 0 2px 5px -2px #313131d3;
 
-  // opacity:0;
   transition: opacity var(--transision);
 
   overflow: hidden;
 
   @media screen and (min-width: 580px) {
-    
     flex-basis: calc(50% - 1em);
   }
 
@@ -30,7 +28,6 @@
   max-width: 100%;
   height: auto;
 }
-
 
 .photo-card .info {
   padding-left: 14px;
