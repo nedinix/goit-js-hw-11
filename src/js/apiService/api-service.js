@@ -24,13 +24,31 @@ export default class ImagesApiService {
 
     try {
       if (this.searchQuery) {
-        const response = await instance.get('', options);
+        const response = await instance
+          .get('', options)
+          .catch(function (error) {
+            if (error.response) {
+              // Запит було зроблено, і сервер відповів кодом стану, який
+              // виходить за межі 2xx
+              console.log(error.response.data);
+              console.log(error.response.status);
+              console.log(error.response.headers);
+            } else if (error.request) {
+              // Запит було зроблено, але відповіді не отримано
+              // `error.request` - це екземпляр XMLHttpRequest у браузері та екземпляр
+              // http.ClientRequest у node.js
+              console.log(error.request);
+            } else {
+              // Щось сталося під час налаштування запиту, що викликало помилку
+              console.log('Error', error.message);
+            }
+            console.log(error.config);
+          });
         this.incrementPage();
-
         return response.data;
       }
     } catch (error) {
-      console.log(error.message);
+      throw new Error(Notify.failure(`${error.message}`));
     }
   }
 

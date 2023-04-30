@@ -5,14 +5,13 @@ import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-refs.loadMoreBtn.style.display = 'none';
+refs.loadMoreBtn.classList.add('is-hidden');
 
 refs.searchForm.addEventListener('submit', onSearchFormSubmit);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 const imagesApiService = new ImagesApiService();
 const lightbox = new SimpleLightbox('.photo-card-link', {
-  /* options */
   captions: true,
   captionsData: 'alt',
   captionDelay: 250,
@@ -23,14 +22,15 @@ async function onSearchFormSubmit(e) {
 
   imagesApiService.searchQuery = e.target.searchQuery.value.trim();
   imagesApiService.resetPage();
-  refs.loadMoreBtn.style.display = 'none';
+  refs.loadMoreBtn.classList.add('is-hidden');
   refs.container.innerHTML = '';
+
   if (imagesApiService.searchQuery) {
     const { hits, totalHits } = await imagesApiService.fetchImages();
     if (hits.length) {
       Notify.info(`Hooray! We found ${totalHits} images.`);
       renderGallery(hits);
-      refs.loadMoreBtn.style.display = 'block';
+      refs.loadMoreBtn.classList.remove('is-hidden');
     } else {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
