@@ -16,7 +16,6 @@
   overflow: hidden;
 
   @media screen and (min-width: 580px) {
-    
     flex-basis: calc(50% - 1em);
   }
 
@@ -74,5 +73,5 @@
 }
 
 .photo-card .info-item > .span {
-color: var(--button-color)
+  color: var(--button-color)
 }

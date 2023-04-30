@@ -11,27 +11,23 @@
   align-items: flex-start;
 }
 
-
-
 .load-more {
   display: block;
 
   margin-right: auto;
   margin-left: auto;
   padding: 8px;
-  
+
   color: #fff;
-  
+
   background-color: var(--button-color);
   border: transparent;
   border-radius: 4px;
   box-shadow: 0 0 5px -2px #313131d3;
 
   transform: scale(0.98);
-  transition: box-shadow var(--transision),
-    color var(--transision),
-    background-color var(--transision),
-    transform var(--transision-scale);
+  transition: box-shadow var(--transision), color var(--transision),
+    background-color var(--transision), transform var(--transision-scale);
 }
 
 .load-more:hover,
