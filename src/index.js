@@ -28,7 +28,7 @@ async function onSearchFormSubmit(e) {
   if (imagesApiService.searchQuery) {
     const { hits, totalHits } = await imagesApiService.fetchImages();
     if (hits.length) {
-      Notify.info(`Hooray! We found ${totalHits} images.`);
+      Notify.success(`Hooray! We found ${totalHits} images.`);
       renderGallery(hits);
 
       refs.loadMoreBtn.classList.remove('is-hidden');
