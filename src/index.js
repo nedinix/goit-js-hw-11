@@ -39,7 +39,7 @@ async function onSearchFormSubmit(e) {
     }
     Notify.success(`Hooray! We found ${totalHits} images.`);
     renderGallery(hits);
-    if (totalHits < hits.length) {
+    if (totalHits > 40) {
       refs.loadMoreBtn.classList.remove('is-hidden');
     }
   });
@@ -49,14 +49,17 @@ async function onLoadMore() {
   return await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
     if (hits.length < totalHits) {
       renderGallery(hits);
-      smoothScroll();
-    } else {
+    }
+
+    if (totalHits % hits.length) {
       refs.loadMoreBtn.classList.add('is-hidden');
       Notify.failure(
         "We're sorry, but you've reached the end of search results."
       );
     }
-});
+    smoothScroll();
+  });
+}
 
 function renderGallery(data) {
   refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
