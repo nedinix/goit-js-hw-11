@@ -1,6 +1,7 @@
 import refs from './js/common/refs';
 import ImagesApiService from './js/apiService/api-service';
 import createGalleryMarkup from './js/markupService/createGallery';
+import loadScroll from './js/helpers/loadScroll';
 import { Notify } from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
@@ -25,51 +26,42 @@ async function onSearchFormSubmit(e) {
   refs.loadMoreBtn.classList.add('is-hidden');
   refs.container.innerHTML = '';
 
-  if (!imagesApiService.searchQuery) {
-    return Notify.failure(
+  try {
+    await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
+      Notify.success(`Hooray! We found ${totalHits} images.`);
+      renderGallery(hits);
+      if (totalHits > 40) {
+        refs.loadMoreBtn.classList.remove('is-hidden');
+      }
+    });
+  } catch (error) {
+    Notify.failure(
       'Sorry, there are no images matching your search query. Please try again.'
     );
   }
-
-  return await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
-    if (!hits.length) {
-      return Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.'
-      );
-    }
-    Notify.success(`Hooray! We found ${totalHits} images.`);
-    renderGallery(hits);
-    if (totalHits > 40) {
-      refs.loadMoreBtn.classList.remove('is-hidden');
-    }
-  });
 }
 
 async function onLoadMore() {
-  return await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
+  await imagesApiService.fetchImages().then(({ hits, totalHits }) => {
     if (hits.length < totalHits) {
       renderGallery(hits);
     }
 
-    if (totalHits % hits.length) {
+    if (hits.length < 40) {
       refs.loadMoreBtn.classList.add('is-hidden');
+
       Notify.failure(
-        "We're sorry, but you've reached the end of search results."
+        "We're sorry, but you've reached the end of search results.",
+        {
+          timeout: 2000,
+        }
       );
     }
-    smoothScroll();
+    loadScroll();
   });
 }
 
 function renderGallery(data) {
   refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
   lightbox.refresh();
-}
-
-function smoothScroll() {
-  setTimeout(() => {
-    const { height: cardHeight } =
-      refs.container.firstElementChild.getBoundingClientRect();
-    window.scrollBy({ top: cardHeight * 2, behavior: 'smooth' });
-  }, 500);
 }
