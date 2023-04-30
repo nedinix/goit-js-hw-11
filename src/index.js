@@ -28,9 +28,11 @@ async function onSearchFormSubmit(e) {
   if (imagesApiService.searchQuery) {
     const { hits, totalHits } = await imagesApiService.fetchImages();
     if (hits.length) {
-      Notify.info(`Hooray! We found ${totalHits} images.`);
+      Notify.success(`Hooray! We found ${totalHits} images.`);
       renderGallery(hits);
+
       refs.loadMoreBtn.classList.remove('is-hidden');
+      smoothScroll();
     } else {
       Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.'
@@ -46,9 +48,18 @@ async function onSearchFormSubmit(e) {
 async function onLoadMore() {
   const { hits } = await imagesApiService.fetchImages();
   renderGallery(hits);
+  smoothScroll();
 }
 
 function renderGallery(data) {
   refs.container.insertAdjacentHTML('beforeend', createGalleryMarkup(data));
   lightbox.refresh();
+}
+
+function smoothScroll() {
+  setTimeout(() => {
+    const { height: cardHeight } =
+      refs.container.firstElementChild.getBoundingClientRect();
+    window.scrollBy({ top: cardHeight * 2, behavior: 'smooth' });
+  }, 500);
 }
